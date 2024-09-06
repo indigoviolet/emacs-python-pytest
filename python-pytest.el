@@ -79,6 +79,14 @@ This is useful when working on multiple projects simultaneously."
   :group 'python-pytest
   :type 'boolean)
 
+(defcustom python-pytest-working-directory nil
+  "The directory where pytest commands will be run.
+
+If nil, the project root directory will be used."
+  :group 'python-pytest
+  :type '(choice (const :tag "Project root" nil)
+                 (directory :tag "Custom directory")))
+
 (defcustom python-pytest-pdb-track t
   "Whether to automatically track output when pdb is spawned.
 
@@ -426,7 +434,8 @@ TestClassParent::TestClassChild::test_my_function."
 (cl-defun python-pytest--run-command (&key command edit)
   "Run a pytest command line."
   (python-pytest--maybe-save-buffers)
-  (let* ((default-directory (python-pytest--project-root)))
+  (let* ((default-directory (or python-pytest-working-directory
+                                (python-pytest--project-root))))
     (when python-pytest-confirm
       (setq edit (not edit)))
     (when edit
