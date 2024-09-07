@@ -447,11 +447,12 @@ TestClassParent::TestClassChild::test_my_function."
     (setq python-pytest--history (-uniq python-pytest--history))
     (puthash (python-pytest--project-root) command
              python-pytest--project-last-command)
-    (python-pytest--run-as-comint :command command)))
+    (python-pytest--run-as-comint :command command :directory default-directory)))
 
-(cl-defun python-pytest--run-as-comint (&key command)
-  "Run a pytest comint session for COMMAND."
-  (let* ((buffer (python-pytest--get-buffer))
+(cl-defun python-pytest--run-as-comint (&key command directory)
+  "Run a pytest comint session for COMMAND in DIRECTORY."
+  (let* ((default-directory directory)
+         (buffer (python-pytest--get-buffer))
          (process (get-buffer-process buffer)))
     (with-current-buffer buffer
       (display-buffer buffer)
