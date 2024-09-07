@@ -434,7 +434,7 @@ TestClassParent::TestClassChild::test_my_function."
 (cl-defun python-pytest--run-command (&key command edit)
   "Run a pytest command line."
   (python-pytest--maybe-save-buffers)
-  (let* ((default-directory (or python-pytest-working-directory
+  (let* ((working-directory (or python-pytest-working-directory
                                 (python-pytest--project-root))))
     (when python-pytest-confirm
       (setq edit (not edit)))
@@ -447,14 +447,14 @@ TestClassParent::TestClassChild::test_my_function."
     (setq python-pytest--history (-uniq python-pytest--history))
     (puthash (python-pytest--project-root) command
              python-pytest--project-last-command)
-    (python-pytest--run-as-comint :command command :directory default-directory)))
+    (python-pytest--run-as-comint :command command :directory working-directory)))
 
 (cl-defun python-pytest--run-as-comint (&key command directory)
   "Run a pytest comint session for COMMAND in DIRECTORY."
-  (let* ((default-directory directory)
-         (buffer (python-pytest--get-buffer))
+  (let* ((buffer (python-pytest--get-buffer))
          (process (get-buffer-process buffer)))
     (with-current-buffer buffer
+      (setq default-directory directory)
       (display-buffer buffer)
       (when (comint-check-proc buffer)
         (unless (or compilation-always-kill
